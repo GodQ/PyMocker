@@ -11,7 +11,6 @@ from pymocker.log import get_logger
 
 """
 HTTP proxy server
-Default port 4272
 """
 
 CURRENT_PATH = Path(__file__).parent
@@ -23,11 +22,14 @@ logger = get_logger()
 
 class ProxyServer(ProcessServer):
 
-    def __init__(self):
+    def __init__(self, reverse_proxy_url="https://www.baidu.com"):
         super().__init__()
 
         conf = settings.config
+        self.proxy_ip = str(conf.proxy_host)
         self.proxy_port = str(conf.proxy_port)
+        self.proxy_web_port = str(conf.proxy_web_port)
+        self.reverse_proxy_url = reverse_proxy_url
         '''
         --ignore_hosts:
         The ignore_hosts option allows you to specify a regex which is matched against a host:port
@@ -44,7 +46,7 @@ class ProxyServer(ProcessServer):
         self._master = None
 
     def run(self):
-        server_ip = settings.config.proxy_ip
+        server_ip = settings.config.proxy_host
         logger.warning(f'start on http://{server_ip}:{self.proxy_port}   {Fore.CYAN} ***请在被测设备上设置代理服务器地址***')
         # mitm_arguments = [
         #     '-s', str(FLOW_PATH),
@@ -58,10 +60,10 @@ class ProxyServer(ProcessServer):
         # run(DumpMaster, mitmdump, mitm_arguments)
         mitm_arguments = [
             '-s', str(FLOW_PATH),
-            '--mode', 'reverse:https://www.baidu.com',
+            '--mode', f'reverse:{self.reverse_proxy_url}',
             '--listen-port', self.proxy_port,
-            '--web-port', '8086',
-            '--web-host', '0.0.0.0',
+            '--web-port', self.proxy_web_port,
+            '--web-host', self.proxy_ip,
             '--no-web-open-browser',
             '--showhost',
             '-vvvvvv',
@@ -71,6 +73,9 @@ class ProxyServer(ProcessServer):
         ]
         print(mitm_arguments)
         mitmweb(mitm_arguments)
+
+
+proxy_server = ProxyServer()
 
 
 def info_msg(*msg):
