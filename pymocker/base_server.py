@@ -16,7 +16,9 @@ class ProcessServer:
             return
         self.running = True
         self.server_instance = Process(target=self.run, args=args, kwargs=kwargs)
+        self.server_instance.daemon = True
         self.server_instance.start()
+        return self.server_instance
 
     def stop(self):
         self.running = False
@@ -38,6 +40,12 @@ class ProcessServer:
             return self.server_instance.is_alive()
         else:
             return False
+
+    def get_pid(self):
+        if self.is_alive():
+            return self.server_instance.pid
+        else:
+            return None
 
 
 class StaticServer:

@@ -1,10 +1,11 @@
 from mitmproxy import http
 from pymocker import settings
 from pymocker import log
+import json
 
 """
 Script for mitmdump
-Redirect request from proxy server to mock server
+Redirect request from proxy server to real server
 """
 
 _logger = log.get_logger()
@@ -46,15 +47,25 @@ def request(flow: http.HTTPFlow) -> None:
     # pretty_url takes the "Host" header of the request into account, which
     # is useful in transparent mode where we usually only have the IP otherwise.
 
+    from pymocker.proxy.proxy_server import current_proxy_server
+    proxy_settings = current_proxy_server.proxy_settings
+
     print(flow.request.pretty_url, flow.request.path)
     # print(dir(flow.request))
-    if flow.request.path == "/path":
-        # flow.response = http.HTTPResponse.make(
-        #     200,  # (optional) status code
-        #     b"Hello World",  # (optional) content
-        #     {"Content-Type": "text/html"}  # (optional) headers
-        # )
-        to_mock_server(flow)
+    if flow.request.path == "/proxy_info":
+        resp = {
+            "proxy_settings": proxy_settings,
+            "info": "Proxy Info"
+        }
+        flow.response = http.HTTPResponse.make(
+            200,  # (optional) status code
+            json.dumps(resp),  # (optional) content
+            {"Content-Type": "application/json"}  # (optional) headers
+        )
+        # print('to_mock_server')
+        # to_mock_server(flow)
+    else:
+        print('Go Go Go')
 
 
 # def responseheaders(flow):

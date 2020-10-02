@@ -1,0 +1,106 @@
+{
+	"info": {
+		"_postman_id": "cbfefb0b-f929-44c6-8010-6d060e67815f",
+		"name": "py-mock",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "create proxy 1",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"reverse_proxy_url\": \"https://www.baidu.com\",\n    \"proxy_port\": \"8080\",\n    \"proxy_web_port\": \"8082\",\n    \"proxy_settings\": {\n        \"a\": 1,\n        \"b\": 2\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/proxy",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"proxy"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create proxy 2",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"reverse_proxy_url\": \"https://www.baidu.com\",\n    \"proxy_port\": \"8086\",\n    \"proxy_web_port\": \"8087\",\n    \"proxy_settings\": {\n        \"c\": 3,\n        \"d\": 4\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/proxy",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"proxy"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/proxy_info",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/proxy_info",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"proxy_info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "search",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/s?wd=aaa",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"s"
+					],
+					"query": [
+						{
+							"key": "wd",
+							"value": "aaa"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
