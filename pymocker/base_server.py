@@ -46,12 +46,3 @@ class ProcessServer:
             return self.server_instance.pid
         else:
             return None
-
-
-class StaticServer:
-
-    def start(self, *args, **kwargs):
-        pass
-
-    def stop(self):
-        pass

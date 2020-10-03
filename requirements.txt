@@ -2,3 +2,4 @@ flask
 mitmproxy
 flask_restful
 colorama
+jsonpath
