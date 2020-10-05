@@ -1,4 +1,4 @@
-import socket
+import time
 import asyncio
 import json
 from pathlib import Path
@@ -7,6 +7,7 @@ from pymocker.mocker.proxy_run import run, mitmweb
 from mitmproxy.tools.dump import DumpMaster
 from mitmproxy.tools.cmdline import mitmdump
 from pymocker.base_server import ProcessServer
+from pymocker.mgmt.port_repo import PortRepo
 from pymocker import settings
 from pymocker.log import get_logger
 
@@ -25,24 +26,34 @@ current_mock_rules = None
 
 class MockServer(ProcessServer):
 
-    def __init__(self, mock_port=80, mock_web_port=8086, reverse_mock_url="https://www.baidu.com", mock_server_id=None,
-                 mock_rules=None):
+    def __init__(self,
+                 mock_port: int = None,
+                 mock_web_port: int = None,
+                 reverse_mock_url: str = None,
+                 mock_server_id: str = None,
+                 mock_rules: list = None):
         super().__init__()
         self.reverse_mock_url = reverse_mock_url
         self.mock_rules = mock_rules
 
-        conf = settings.config
-
         if not mock_port:
-            self.mock_port = str(conf.proxy_port)
+            self.mock_port = PortRepo.find_available_port()
         else:
-            self.mock_port = str(mock_port)
+            mock_port = int(mock_port)
+            port_available = PortRepo.check_port_available(mock_port)
+            if port_available is False:
+                raise Exception(f"The mock_port {mock_port} is in use")
+            self.mock_port = mock_port
         if not mock_web_port:
-            self.mock_web_port = str(conf.proxy_web_port)
+            self.mock_web_port = PortRepo.find_available_port()
         else:
+            mock_web_port = int(mock_web_port)
+            port_available = PortRepo.check_port_available(mock_web_port)
+            if port_available is False:
+                raise Exception(f"The mock_web_port {mock_web_port} is in use")
             self.mock_web_port = mock_web_port
         if not mock_server_id:
-            self.mock_server_id = self.reverse_mock_url
+            self.mock_server_id = str(time.time())
         else:
             self.mock_server_id = mock_server_id
         '''
@@ -91,8 +102,8 @@ class MockServer(ProcessServer):
         mitm_arguments = [
             '-s', str(FLOW_PATH),
             '--mode', f'reverse:{self.reverse_mock_url}',
-            '--listen-port', self.mock_port,
-            '--web-port', self.mock_web_port,
+            '--listen-port', str(self.mock_port),
+            '--web-port', str(self.mock_web_port),
             '--web-host', proxy_ip,
             '--no-web-open-browser',
             '--showhost',

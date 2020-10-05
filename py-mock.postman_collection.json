@@ -6,13 +6,13 @@
 	},
 	"item": [
 		{
-			"name": "create proxy 1",
+			"name": "create mock_server 001",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"reverse_proxy_url\": \"https://www.baidu.com\",\n    \"proxy_port\": \"8080\",\n    \"proxy_web_port\": \"8082\",\n    \"proxy_settings\": {\n        \"a\": 1,\n        \"b\": 2\n    }\n}",
+					"raw": "{\n    \"mock_server_id\": \"001\",\n    \"mock_url\": \"https://www.httpbin.org\",\n    \"mock_rules\": [\n        {\n            \"method\": \"GET\",\n            \"path\": \".*get.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"error\": \"Rewrite get response!!!\"\n            },\n            \"response_headers\": {\n                \"HHH\": \"Mock header\"\n            }\n        },\n        {\n            \"method\": \"POST\",\n            \"path\": \".*/hit/post.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"info\": \"hit post!!\"\n            }\n        }\n    ]\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -20,26 +20,26 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5000/proxy",
+					"raw": "localhost:5000/mock_servers",
 					"host": [
 						"localhost"
 					],
 					"port": "5000",
 					"path": [
-						"proxy"
+						"mock_servers"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "create proxy 2",
+			"name": "create mock_server 002",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"reverse_proxy_url\": \"https://www.baidu.com\",\n    \"proxy_port\": \"8086\",\n    \"proxy_web_port\": \"8087\",\n    \"proxy_settings\": {\n        \"c\": 3,\n        \"d\": 4\n    }\n}",
+					"raw": "{\n    \"mock_server_id\": \"002\",\n    \"mock_url\": \"http://www.httpbin.org\",\n    \"mock_port\": \"8080\",\n    \"mock_web_port\": \"8082\",\n    \"mock_rules\": [\n        {\n            \"method\": \"GET\",\n            \"path\": \".*get.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"error\": \"Rewrite get response!!!\"\n            },\n            \"response_headers\": {\n                \"HHH\": \"Mock header\"\n            }\n        },\n        {\n            \"method\": \"POST\",\n            \"path\": \".*/hit/post.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"info\": \"hit post!!\"\n            }\n        }\n    ]\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -47,54 +47,178 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5000/proxy",
+					"raw": "localhost:5000/mock_servers",
 					"host": [
 						"localhost"
 					],
 					"port": "5000",
 					"path": [
-						"proxy"
+						"mock_servers"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "localhost:8080/proxy_info",
+			"name": "list mock servers",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/proxy_info",
+					"raw": "localhost:5000/mock_servers",
 					"host": [
 						"localhost"
 					],
-					"port": "8080",
+					"port": "5000",
 					"path": [
-						"proxy_info"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "search",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:8080/s?wd=aaa",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"s"
+						"mock_servers"
 					],
 					"query": [
 						{
-							"key": "wd",
-							"value": "aaa"
+							"key": "show_rules",
+							"value": "true",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get mock server",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/mock_servers/001",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"mock_servers",
+						"001"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete mock server 001",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/mock_servers/001",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"mock_servers",
+						"001"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "mock get  mock_rules",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/mock_rules?a=1&b=2",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"mock_rules"
+					],
+					"query": [
+						{
+							"key": "a",
+							"value": "1"
+						},
+						{
+							"key": "b",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "mock get",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/get?a=1&b=2",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"get"
+					],
+					"query": [
+						{
+							"key": "a",
+							"value": "1"
+						},
+						{
+							"key": "b",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "mock post /hit/post  only post",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/hit/post",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"hit",
+						"post"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "put",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/put?a=1&b=x",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"put"
+					],
+					"query": [
+						{
+							"key": "a",
+							"value": "1"
+						},
+						{
+							"key": "b",
+							"value": "x"
 						}
 					]
 				}
