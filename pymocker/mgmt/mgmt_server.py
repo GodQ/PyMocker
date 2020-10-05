@@ -12,8 +12,8 @@ flask_app = Flask(__name__)
 
 @flask_app.route('/mock_servers', methods=['POST'])
 def post_mock_servers():
-    req = request.json
-    ret, msg = MockServerRepo.add_mock_server(req)
+    req_data = request.json
+    ret, msg = MockServerRepo.add_mock_server(req_data)
     if ret:
         resp = msg
         return resp, 200
@@ -51,6 +51,20 @@ def get_mock_server(mock_server_id):
             "error": "Not Found"
         }
         return resp, 404
+
+
+@flask_app.route('/mock_servers/<mock_server_id>', methods=['PUT'])
+def put_mock_servers(mock_server_id):
+    req_data = request.json
+    ret, msg = MockServerRepo.put_mock_server(mock_server_id, req_data)
+    if ret:
+        resp = req_data
+        return resp, 200
+    else:
+        resp = {
+            "error": msg
+        }
+        return resp, 400
 
 
 @flask_app.route('/mock_servers/<mock_server_id>', methods=['DELETE'])

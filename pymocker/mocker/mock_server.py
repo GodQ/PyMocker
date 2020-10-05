@@ -21,7 +21,7 @@ FLOW_PATH = CURRENT_PATH/'mitm.py'
 
 
 logger = get_logger()
-current_mock_rules = None
+current_mock_server = None
 
 
 class MockServer(ProcessServer):
@@ -84,9 +84,12 @@ class MockServer(ProcessServer):
         }
         return d
 
+    def get_access_url(self):
+        return f"http://127.0.0.1:{self.mock_port}"
+
     def run(self):
-        global current_mock_rules
-        current_mock_rules = self
+        global current_mock_server
+        current_mock_server = self
         proxy_ip = str(settings.config.proxy_host)
         logger.warning(f'Proxy starts on http://{proxy_ip}:{self.mock_port}   {Fore.CYAN}')
         # mitm_arguments = [

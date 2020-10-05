@@ -3,8 +3,6 @@ import re
 import json
 import jsonpath
 
-mock_rules = []
-
 
 class Request:
     def __init__(self, **kwargs):
@@ -45,21 +43,51 @@ class Response:
 
 
 def get_mock_rules():
-    global mock_rules
-    if not mock_rules:
-        from pymocker.mocker.mock_server import current_mock_rules
-        mock_rules = current_mock_rules.mock_rules
+    from pymocker.mocker.mock_server import current_mock_server
+    mock_rules = current_mock_server.mock_rules
     return mock_rules
+
+
+def set_mock_rules(rules: list):
+    from pymocker.mocker.mock_server import current_mock_server
+    current_mock_server.mock_rules = rules
 
 
 def process_request(req: Request) -> Response:
     current_mock_rules = get_mock_rules()
     resp = Response()
     if req.path == '/mock_rules':
-        resp.status = 200
-        resp.data = json.dumps(current_mock_rules)
-        resp.headers = {"Content-Type": "application/json"}
-        return resp
+        if req.method.lower() == 'get':
+            resp.status = 200
+            resp.data = json.dumps(get_mock_rules())
+            resp.headers = {"Content-Type": "application/json"}
+            return resp
+        elif req.method.lower() == 'put':
+            rules = req.data
+            if isinstance(rules, bytes):
+                rules = rules.decode()
+            if isinstance(rules, str):
+                rules = json.loads(rules)
+            if isinstance(rules, dict):
+                rules = rules.get('mock_rules')
+            if not isinstance(rules, list):
+                resp.status = 400
+                resp.data = json.dumps(
+                    {"error": f'Mock rules format error, only list supported, but is {type(rules)}'}
+                )
+                resp.headers = {"Content-Type": "application/json"}
+                return resp
+            # elif not rules:
+            #     resp.status = 400
+            #     resp.data = json.dumps({"error": 'No mock rules'})
+            #     resp.headers = {"Content-Type": "application/json"}
+            #     return resp
+            else:
+                set_mock_rules(rules)
+                resp.status = 200
+                resp.data = json.dumps(get_mock_rules())
+                resp.headers = {"Content-Type": "application/json"}
+                return resp
     for rule in current_mock_rules:
         ret = process_one_rule(rule, req, resp)
         if ret is True:
