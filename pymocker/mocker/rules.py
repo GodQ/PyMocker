@@ -2,6 +2,7 @@ from mitmproxy import http
 import re
 import json
 import jsonpath
+import copy
 
 
 class Request:
@@ -25,7 +26,7 @@ class Response:
     def __init__(self, **kwargs):
         self.status = kwargs.get('status')
         self.headers = kwargs.get('headers', {})
-        self.data = kwargs.get('data', "")
+        self.data = kwargs.get('data', {})
         self.urlencoded_form = kwargs.get('urlencoded_form', {})
 
     def empty(self):
@@ -56,6 +57,7 @@ def set_mock_rules(rules: list):
 def process_request(req: Request) -> Response:
     current_mock_rules = get_mock_rules()
     resp = Response()
+    # mock server built-in api
     if req.path == '/mock_rules':
         if req.method.lower() == 'get':
             resp.status = 200
@@ -88,11 +90,23 @@ def process_request(req: Request) -> Response:
                 resp.data = json.dumps(get_mock_rules())
                 resp.headers = {"Content-Type": "application/json"}
                 return resp
+
+    # Traverse rules list to match every rule
     for rule in current_mock_rules:
         ret = process_one_rule(rule, req, resp)
         if ret is True:
             return resp
     return None
+
+
+def exec_python_script(python_script: str, rule: dict, request: Request, response: Response):
+    vars = {
+        'rule': rule,
+        'request': request,
+        'response': response
+    }
+    # exec(object=python_script, __locals=vars, __globals=vars)
+    exec(python_script)
 
 
 def process_one_rule(rule: dict, req: Request, resp: Response) -> bool:
@@ -131,6 +145,9 @@ def process_one_rule(rule: dict, req: Request, resp: Response) -> bool:
     resp.status = rule.get('response_status', 200)
     resp.headers = rule.get('response_headers', {})
     resp.data = rule.get('response_data', "")
+    python_script = rule.get('python_script')
+    if python_script:
+        exec_python_script(python_script, rule=copy.deepcopy(rule), request=req, response=resp)
     if isinstance(resp.data, dict):
         resp.data = json.dumps(resp.data)
         resp.headers['Content-Type'] = "application/json"

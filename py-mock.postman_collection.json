@@ -24,7 +24,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"mock_server_id\": \"001\",\n    \"mock_url\": \"https://www.httpbin.org\",\n    \"mock_rules\": [\n        {\n            \"method\": \"PUT\",\n            \"path\": \".*put.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"error\": \"Rewrite put response!!!\"\n            },\n            \"response_headers\": {\n                \"HHH\": \"Mock header\"\n            }\n        },\n        {\n            \"method\": \"POST\",\n            \"path\": \".*/post.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"info\": \"hit post!!\"\n            }\n        }\n    ]\n}",
+					"raw": "{\n    \"mock_server_id\": \"001\",\n    \"mock_url\": \"https://www.httpbin.org\",\n    \"mock_rules\": [\n        {\n            \"method\": \"PUT\",\n            \"path\": \".*put.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"error\": \"Rewrite put response!!!\"\n            },\n            \"response_headers\": {\n                \"HHH\": \"Mock header\"\n            }\n        },\n        {\n            \"method\": \"POST\",\n            \"path\": \".*/post.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"info\": \"hit post!!\"\n            }\n        },\n        {\n            \"method\": \"GET\",\n            \"path\": \".*/script.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"info\": \"hit script!!\"\n            },\n            \"python_script\": \"response.headers['new']='python script'; response.data['new']='python script'\"\n        }\n    ]\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -46,6 +46,18 @@
 		},
 		{
 			"name": "create mock_server 002",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "23e5c413-5683-4e69-af7d-03398a20a744",
+						"exec": [
+							"pm.globals.set(\"mock_port\", pm.response.json().mock_port);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -276,6 +288,34 @@
 					"port": "{{mock_port}}",
 					"path": [
 						"get"
+					],
+					"query": [
+						{
+							"key": "a",
+							"value": "1"
+						},
+						{
+							"key": "b",
+							"value": "x"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get by python script",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:{{mock_port}}/script?a=1&b=x",
+					"host": [
+						"localhost"
+					],
+					"port": "{{mock_port}}",
+					"path": [
+						"script"
 					],
 					"query": [
 						{
