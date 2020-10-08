@@ -6,330 +6,338 @@
 	},
 	"item": [
 		{
-			"name": "create mock_server 001",
-			"event": [
+			"name": "mgmt",
+			"item": [
 				{
-					"listen": "test",
-					"script": {
-						"id": "a14f51e5-61aa-4b33-96b1-e84fb4498e4e",
-						"exec": [
-							"pm.globals.set(\"mock_port\", pm.response.json().mock_port);"
-						],
-						"type": "text/javascript"
-					}
+					"name": "create mock_server 001",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a14f51e5-61aa-4b33-96b1-e84fb4498e4e",
+								"exec": [
+									"pm.globals.set(\"mock_port\", pm.response.json().mock_port);",
+									"pm.globals.set(\"access_url\", pm.response.json().access_url);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"mock_server_id\": \"001\",\n    \"mock_url\": \"https://www.httpbin.org\",\n    \"mock_rules\": [\n        {\n            \"method\": \"PUT\",\n            \"path\": \".*put.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"error\": \"Rewrite put response!!!\"\n            },\n            \"response_headers\": {\n                \"HHH\": \"Mock header\"\n            }\n        },\n        {\n            \"method\": \"POST\",\n            \"path\": \".*/post.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"info\": \"hit post!!\"\n            }\n        },\n        {\n            \"method\": \"GET\",\n            \"path\": \".*/script.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"info\": \"hit script!!\"\n            },\n            \"python_script\": \"response.headers['new']='python script'; response.data['new']='python script'\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/mock_servers",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"mock_servers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create mock_server 002",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "23e5c413-5683-4e69-af7d-03398a20a744",
+								"exec": [
+									"pm.globals.set(\"mock_port\", pm.response.json().mock_port);",
+									"pm.globals.set(\"access_url\", pm.response.json().access_url);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"mock_server_id\": \"002\",\n    \"mock_url\": \"http://www.httpbin.org\",\n    \"mock_port\": \"8080\",\n    \"mock_web_port\": \"8082\",\n    \"mock_rules\": [\n        {\n            \"method\": \"PUT\",\n            \"path\": \".*put.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"error\": \"Rewrite put response!!!\"\n            },\n            \"response_headers\": {\n                \"HHH\": \"Mock header\"\n            }\n        },\n        {\n            \"method\": \"POST\",\n            \"path\": \".*/post.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"info\": \"hit post!!\"\n            }\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/mock_servers",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"mock_servers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update mock_server 001 rules",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"mock_rules\": [\n        {\n            \"method\": \"PUT\",\n            \"path\": \".*put.*\",\n            \"response_status\": 202,\n            \"response_data\": {\n                \"error\": \"Updated put response!!!\"\n            },\n            \"response_headers\": {\n                \"HHH\": \"Mock header updated\"\n            }\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/mock_servers/001",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"mock_servers",
+								"001"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list mock servers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/mock_servers",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"mock_servers"
+							],
+							"query": [
+								{
+									"key": "show_rules",
+									"value": "true",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get mock server",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/mock_servers/001",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"mock_servers",
+								"001"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete mock server 001",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/mock_servers/001",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"mock_servers",
+								"001"
+							]
+						}
+					},
+					"response": []
 				}
 			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"mock_server_id\": \"001\",\n    \"mock_url\": \"https://www.httpbin.org\",\n    \"mock_rules\": [\n        {\n            \"method\": \"PUT\",\n            \"path\": \".*put.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"error\": \"Rewrite put response!!!\"\n            },\n            \"response_headers\": {\n                \"HHH\": \"Mock header\"\n            }\n        },\n        {\n            \"method\": \"POST\",\n            \"path\": \".*/post.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"info\": \"hit post!!\"\n            }\n        },\n        {\n            \"method\": \"GET\",\n            \"path\": \".*/script.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"info\": \"hit script!!\"\n            },\n            \"python_script\": \"response.headers['new']='python script'; response.data['new']='python script'\"\n        }\n    ]\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "localhost:5000/mock_servers",
-					"host": [
-						"localhost"
-					],
-					"port": "5000",
-					"path": [
-						"mock_servers"
-					]
-				}
-			},
-			"response": []
+			"protocolProfileBehavior": {}
 		},
 		{
-			"name": "create mock_server 002",
-			"event": [
+			"name": "mock server",
+			"item": [
 				{
-					"listen": "test",
-					"script": {
-						"id": "23e5c413-5683-4e69-af7d-03398a20a744",
-						"exec": [
-							"pm.globals.set(\"mock_port\", pm.response.json().mock_port);"
-						],
-						"type": "text/javascript"
-					}
+					"name": "mock get  mock_rules",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{access_url}}/mock_rules?a=1&b=2",
+							"host": [
+								"{{access_url}}"
+							],
+							"path": [
+								"mock_rules"
+							],
+							"query": [
+								{
+									"key": "a",
+									"value": "1"
+								},
+								{
+									"key": "b",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update mock rules",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"mock_rules\": [\n        {\n            \"method\": \"PUT\",\n            \"path\": \".*put.*\",\n            \"response_status\": 202,\n            \"response_data\": {\n                \"error\": \"Updated put response!!!\"\n            },\n            \"response_headers\": {\n                \"HHH\": \"Mock header updated\"\n            }\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{access_url}}/mock_rules",
+							"host": [
+								"{{access_url}}"
+							],
+							"path": [
+								"mock_rules"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "mock put",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{access_url}}/put?a=1&b=2",
+							"host": [
+								"{{access_url}}"
+							],
+							"path": [
+								"put"
+							],
+							"query": [
+								{
+									"key": "a",
+									"value": "1"
+								},
+								{
+									"key": "b",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "mock post /post  only post",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{access_url}}/post",
+							"host": [
+								"{{access_url}}"
+							],
+							"path": [
+								"post"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{access_url}}/get?a=1&b=x",
+							"host": [
+								"{{access_url}}"
+							],
+							"path": [
+								"get"
+							],
+							"query": [
+								{
+									"key": "a",
+									"value": "1"
+								},
+								{
+									"key": "b",
+									"value": "x"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get by python script",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{access_url}}/script?a=1&b=x",
+							"host": [
+								"{{access_url}}"
+							],
+							"path": [
+								"script"
+							],
+							"query": [
+								{
+									"key": "a",
+									"value": "1"
+								},
+								{
+									"key": "b",
+									"value": "x"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"mock_server_id\": \"002\",\n    \"mock_url\": \"http://www.httpbin.org\",\n    \"mock_port\": \"8080\",\n    \"mock_web_port\": \"8082\",\n    \"mock_rules\": [\n        {\n            \"method\": \"PUT\",\n            \"path\": \".*put.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"error\": \"Rewrite put response!!!\"\n            },\n            \"response_headers\": {\n                \"HHH\": \"Mock header\"\n            }\n        },\n        {\n            \"method\": \"POST\",\n            \"path\": \".*/post.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"info\": \"hit post!!\"\n            }\n        }\n    ]\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "localhost:5000/mock_servers",
-					"host": [
-						"localhost"
-					],
-					"port": "5000",
-					"path": [
-						"mock_servers"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "update mock_server 001 rules",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"mock_rules\": [\n        {\n            \"method\": \"PUT\",\n            \"path\": \".*put.*\",\n            \"response_status\": 202,\n            \"response_data\": {\n                \"error\": \"Updated put response!!!\"\n            },\n            \"response_headers\": {\n                \"HHH\": \"Mock header updated\"\n            }\n        }\n    ]\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "localhost:5000/mock_servers/001",
-					"host": [
-						"localhost"
-					],
-					"port": "5000",
-					"path": [
-						"mock_servers",
-						"001"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "list mock servers",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:5000/mock_servers",
-					"host": [
-						"localhost"
-					],
-					"port": "5000",
-					"path": [
-						"mock_servers"
-					],
-					"query": [
-						{
-							"key": "show_rules",
-							"value": "true",
-							"disabled": true
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get mock server",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:5000/mock_servers/001",
-					"host": [
-						"localhost"
-					],
-					"port": "5000",
-					"path": [
-						"mock_servers",
-						"001"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "delete mock server 001",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "localhost:5000/mock_servers/001",
-					"host": [
-						"localhost"
-					],
-					"port": "5000",
-					"path": [
-						"mock_servers",
-						"001"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "mock get  mock_rules",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:{{mock_port}}/mock_rules?a=1&b=2",
-					"host": [
-						"localhost"
-					],
-					"port": "{{mock_port}}",
-					"path": [
-						"mock_rules"
-					],
-					"query": [
-						{
-							"key": "a",
-							"value": "1"
-						},
-						{
-							"key": "b",
-							"value": "2"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "update mock rules",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"mock_rules\": [\n        {\n            \"method\": \"PUT\",\n            \"path\": \".*put.*\",\n            \"response_status\": 202,\n            \"response_data\": {\n                \"error\": \"Updated put response!!!\"\n            },\n            \"response_headers\": {\n                \"HHH\": \"Mock header updated\"\n            }\n        }\n    ]\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "localhost:{{mock_port}}/mock_rules",
-					"host": [
-						"localhost"
-					],
-					"port": "{{mock_port}}",
-					"path": [
-						"mock_rules"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "mock put",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"url": {
-					"raw": "localhost:{{mock_port}}/put?a=1&b=2",
-					"host": [
-						"localhost"
-					],
-					"port": "{{mock_port}}",
-					"path": [
-						"put"
-					],
-					"query": [
-						{
-							"key": "a",
-							"value": "1"
-						},
-						{
-							"key": "b",
-							"value": "2"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "mock post /post  only post",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"url": {
-					"raw": "localhost:{{mock_port}}/post",
-					"host": [
-						"localhost"
-					],
-					"port": "{{mock_port}}",
-					"path": [
-						"post"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:{{mock_port}}/get?a=1&b=x",
-					"host": [
-						"localhost"
-					],
-					"port": "{{mock_port}}",
-					"path": [
-						"get"
-					],
-					"query": [
-						{
-							"key": "a",
-							"value": "1"
-						},
-						{
-							"key": "b",
-							"value": "x"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get by python script",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:{{mock_port}}/script?a=1&b=x",
-					"host": [
-						"localhost"
-					],
-					"port": "{{mock_port}}",
-					"path": [
-						"script"
-					],
-					"query": [
-						{
-							"key": "a",
-							"value": "1"
-						},
-						{
-							"key": "b",
-							"value": "x"
-						}
-					]
-				}
-			},
-			"response": []
+			"protocolProfileBehavior": {}
 		}
 	],
 	"protocolProfileBehavior": {}

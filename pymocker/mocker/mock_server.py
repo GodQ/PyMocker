@@ -80,12 +80,17 @@ class MockServer(ProcessServer):
             "mock_web_port": self.mock_web_port,
             "mock_server_id": self.mock_server_id,
             "process_id": self.get_pid(),
-            "mock_rules": self.mock_rules
+            "mock_rules": self.mock_rules,
+            "access_url": self.get_access_url(),
+            "monitor_web_url": self.get_monitor_url()
         }
         return d
 
     def get_access_url(self):
         return f"http://127.0.0.1:{self.mock_port}"
+
+    def get_monitor_url(self):
+        return f"http://127.0.0.1:{self.mock_web_port}"
 
     def run(self):
         global current_mock_server
