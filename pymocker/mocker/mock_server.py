@@ -10,6 +10,7 @@ from pymocker.base_server import ProcessServer
 from pymocker.mgmt.port_repo import PortRepo
 from pymocker import settings
 from pymocker.log import get_logger
+from pymocker.mgmt.utils import get_host_ip
 
 
 """
@@ -31,10 +32,19 @@ class MockServer(ProcessServer):
                  mock_web_port: int = None,
                  reverse_mock_url: str = None,
                  mock_server_id: str = None,
-                 mock_rules: list = None):
+                 mock_rules: list = None,
+                 host: str = None):
         super().__init__()
         self.reverse_mock_url = reverse_mock_url
+        if self.reverse_mock_url.split(':')[0] == 'https':
+            self.url_schema = 'https'
+        else:
+            self.url_schema = 'http'
         self.mock_rules = mock_rules
+        if host:
+            self.host = host
+        else:
+            self.host = get_host_ip()
 
         if not mock_port:
             self.mock_port = PortRepo.find_available_port()
@@ -87,10 +97,10 @@ class MockServer(ProcessServer):
         return d
 
     def get_access_url(self):
-        return f"http://127.0.0.1:{self.mock_port}"
+        return f"{self.url_schema}://{self.host}:{self.mock_port}"
 
     def get_monitor_url(self):
-        return f"http://127.0.0.1:{self.mock_web_port}"
+        return f"http://{self.host}:{self.mock_web_port}"
 
     def run(self):
         global current_mock_server

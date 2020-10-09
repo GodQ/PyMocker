@@ -5,6 +5,7 @@ from pymocker.log import get_logger
 from pymocker import settings
 from pymocker.mocker.mock_server import MockServer
 from pymocker.mgmt.mock_server_repo import MockServerRepo
+from pymocker.mgmt.utils import get_host_ip
 
 
 flask_app = Flask(__name__)
@@ -12,8 +13,16 @@ flask_app = Flask(__name__)
 
 @flask_app.route('/mock_servers', methods=['POST'])
 def post_mock_servers():
+    host = get_host_ip()
+    if 'Host' in request.headers:
+        host = request.headers['Host'].split(':')[0]
     req_data = request.json
-    ret, msg = MockServerRepo.add_mock_server(req_data)
+    req_data['host'] = host
+    try:
+        ret, msg = MockServerRepo.add_mock_server(req_data)
+    except Exception as e:
+        ret = False
+        msg = str(e)
     if ret:
         resp = msg
         return resp, 200
@@ -82,7 +91,7 @@ def delete_mock_server(mock_server_id):
 
 
 def run_mgmt_server():
-    flask_app.run(host=settings.config.mock_host, port=settings.config.mock_port, debug=True)
+    flask_app.run(host=settings.config.mock_host, port=settings.config.mgmt_port, debug=True)
 
 
 if __name__ == '__main__':

@@ -40,4 +40,26 @@ def test_find_available_port():
     print(r)
 
 
+def _get_host_ip():
+    s = None
+    ip = None
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('8.8.8.8', 80))
+        ip = s.getsockname()[0]
+    finally:
+        s.close()
+    return ip
+
+
+HOST_IP = None
+
+
+def get_host_ip():
+    global HOST_IP
+    if not HOST_IP:
+        HOST_IP = _get_host_ip()
+    return HOST_IP
+
+
 # test_find_available_port()

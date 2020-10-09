@@ -12,6 +12,7 @@ class MockServerRepo:
         mock_web_port = req_data.get('mock_web_port')
         mock_rules = req_data.get('mock_rules')
         mock_server_id = req_data.get('mock_server_id')
+        host = req_data.get('host')
 
         if mock_server_id in cls.MockServers:
             return False, f"mock_server_id {mock_server_id} has existed"
@@ -21,7 +22,8 @@ class MockServerRepo:
             mock_port=mock_port,
             mock_web_port=mock_web_port,
             mock_rules=mock_rules,
-            mock_server_id=mock_server_id
+            mock_server_id=mock_server_id,
+            host=host
         )
         process = mock_server.start()
         if process.is_alive():
