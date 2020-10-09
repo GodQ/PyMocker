@@ -1,17 +1,14 @@
 from mitmproxy import http
-from pymocker import settings
-from pymocker import log
-import json
+from pymocker.lib.log import get_logger
 from pymocker.mocker.rules import process_request
-
-from pymocker.mocker.rules import get_mock_rules, Request
+from pymocker.mocker.rules import Request
 
 """
 Script for mitmdump
 Redirect request from proxy server to real server
 """
 
-_logger = log.get_logger()
+_logger = get_logger()
 
 
 def request(flow: http.HTTPFlow) -> None:

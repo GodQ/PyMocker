@@ -4,13 +4,11 @@ import json
 from pathlib import Path
 from colorama import Fore, Style
 from pymocker.mocker.proxy_run import run, mitmweb
-from mitmproxy.tools.dump import DumpMaster
-from mitmproxy.tools.cmdline import mitmdump
-from pymocker.base_server import ProcessServer
-from pymocker.mgmt.port_repo import PortRepo
+from pymocker.lib.base_server import ProcessServer
+from pymocker.mocker.port_repo import PortRepo
 from pymocker import settings
-from pymocker.log import get_logger
-from pymocker.mgmt.utils import get_host_ip
+from pymocker.lib.log import get_logger
+from pymocker.lib.utils import get_host_ip
 
 
 """

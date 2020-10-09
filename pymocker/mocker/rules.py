@@ -1,4 +1,3 @@
-from mitmproxy import http
 import re
 import json
 import jsonpath

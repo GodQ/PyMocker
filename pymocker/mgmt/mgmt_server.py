@@ -1,11 +1,8 @@
 
 from flask import Flask, request
-from pymocker.base_server import ProcessServer
-from pymocker.log import get_logger
 from pymocker import settings
-from pymocker.mocker.mock_server import MockServer
 from pymocker.mgmt.mock_server_repo import MockServerRepo
-from pymocker.mgmt.utils import get_host_ip
+from pymocker.lib.utils import get_host_ip
 
 
 flask_app = Flask(__name__)

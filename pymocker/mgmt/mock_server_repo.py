@@ -1,5 +1,7 @@
 from pymocker.mocker.mock_server import MockServer
 import requests
+from urllib3.exceptions import InsecureRequestWarning
+requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
 
 
 class MockServerRepo:
@@ -49,7 +51,7 @@ class MockServerRepo:
             rules = req_data.get('mock_rules')
         else:
             rules = req_data
-        resp = requests.put(url=f"{mock_server.get_access_url()}/mock_rules", json=rules)
+        resp = requests.put(url=f"{mock_server.get_access_url()}/mock_rules", json=rules, verify=False)
         if not resp or resp.status_code != 200:
             return False, "Update remote mock server rules failed"
         mock_server.mock_rules = rules
