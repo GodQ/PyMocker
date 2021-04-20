@@ -6,9 +6,11 @@ PyMocker includes a management rest server and several rest mock server processe
 
 The API spec can follow the postman json file py-mock.postman_collection.json
 
+#Installation
+pip install -r requirements.txt
+python -m pymocker.main
 
-
-Examples:
+#Examples
 
 1. Create a new mock server:
 

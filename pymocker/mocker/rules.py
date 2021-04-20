@@ -13,6 +13,14 @@ class Request:
         self.data = kwargs.get('data')
         self.urlencoded_form = kwargs.get('urlencoded_form')
 
+        if isinstance(self.data, bytes):
+            self.data = self.data.decode()
+        if isinstance(self.data, str):
+            try:
+                self.data = json.loads(self.data)
+            except Exception as e:
+                pass
+
     def __str__(self):
         desc = [f"Content of Request <{self.__hash__()}>:"]
         for field in self.__dict__:
@@ -143,7 +151,7 @@ def process_one_rule(rule: dict, req: Request, resp: Response) -> bool:
     # Pass all validate
     resp.status = rule.get('response_status', 200)
     resp.headers = rule.get('response_headers', {})
-    resp.data = rule.get('response_data', "")
+    resp.data = rule.get('response_data', {})
     python_script = rule.get('python_script')
     if python_script:
         exec_python_script(python_script, rule=copy.deepcopy(rule), request=req, response=resp)
