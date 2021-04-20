@@ -14,7 +14,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a14f51e5-61aa-4b33-96b1-e84fb4498e4e",
 								"exec": [
 									"pm.globals.set(\"mock_port\", pm.response.json().mock_port);",
 									"pm.globals.set(\"access_url\", pm.response.json().access_url);"
@@ -28,7 +27,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"mock_server_id\": \"001\",\n    \"mock_url\": \"https://www.httpbin.org\",\n    \"mock_rules\": [\n        {\n            \"method\": \"PUT\",\n            \"path\": \".*put.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"error\": \"Rewrite put response!!!\"\n            },\n            \"response_headers\": {\n                \"HHH\": \"Mock header\"\n            }\n        },\n        {\n            \"method\": \"POST\",\n            \"path\": \".*/post.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"info\": \"hit post!!\"\n            }\n        },\n        {\n            \"method\": \"GET\",\n            \"path\": \".*/script.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"info\": \"hit script!!\"\n            },\n            \"python_script\": \"response.headers['new']='python script'; response.data['new']='python script'\"\n        }\n    ]\n}",
+							"raw": "{\n    \"mock_server_id\": \"001\",\n    \"mock_url\": \"https://www.httpbin.org\",\n    \"mock_rules\": [\n        {\n            \"method\": \"PUT\",\n            \"path\": \".*put.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"error\": \"Rewrite put response!!!\"\n            },\n            \"response_headers\": {\n                \"HHH\": \"Mock header\"\n            }\n        },\n        {\n            \"method\": \"POST\",\n            \"path\": \".*/post.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"info\": \"hit post!!\"\n            }\n        },\n        {\n            \"method\": \"POST\",\n            \"path\": \".*/script.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"info\": \"hit script!!\"\n            },\n            \"python_script\": \"if request.params['action']=='login' and request.data['user']=='lucy': response.data['token']='token12345'\"\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -54,7 +53,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "23e5c413-5683-4e69-af7d-03398a20a744",
 								"exec": [
 									"pm.globals.set(\"mock_port\", pm.response.json().mock_port);",
 									"pm.globals.set(\"access_url\", pm.response.json().access_url);"
@@ -179,8 +177,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "mock server",
@@ -312,10 +309,19 @@
 				{
 					"name": "get by python script",
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user\": \"lucy\",\n    \"password\": \"111\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{access_url}}/script?a=1&b=x",
+							"raw": "{{access_url}}/script?action=login",
 							"host": [
 								"{{access_url}}"
 							],
@@ -324,21 +330,15 @@
 							],
 							"query": [
 								{
-									"key": "a",
-									"value": "1"
-								},
-								{
-									"key": "b",
-									"value": "x"
+									"key": "action",
+									"value": "login"
 								}
 							]
 						}
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }
