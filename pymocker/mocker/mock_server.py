@@ -28,13 +28,13 @@ class MockServer(ProcessServer):
     def __init__(self,
                  mock_port: int = None,
                  mock_web_port: int = None,
-                 reverse_mock_url: str = None,
+                 reverse_target_url: str = None,
                  mock_server_id: str = None,
                  mock_rules: list = None,
                  host: str = None):
         super().__init__()
-        self.reverse_mock_url = reverse_mock_url
-        if self.reverse_mock_url.split(':')[0] == 'https':
+        self.reverse_target_url = reverse_target_url
+        if self.reverse_target_url.split(':')[0] == 'https':
             self.url_schema = 'https'
         else:
             self.url_schema = 'http'
@@ -83,11 +83,11 @@ class MockServer(ProcessServer):
 
     def to_dict(self):
         d = {
-            "mock_url": self.reverse_mock_url,
+            "target_url": self.reverse_target_url,
             "mock_port": self.mock_port,
             "mock_web_port": self.mock_web_port,
             "mock_server_id": self.mock_server_id,
-            "process_id": self.get_pid(),
+            # "process_id": self.get_pid(),
             "mock_rules": self.mock_rules,
             "access_url": self.get_access_url(),
             "monitor_web_url": self.get_monitor_url()
@@ -117,7 +117,7 @@ class MockServer(ProcessServer):
         # run(DumpMaster, mitmdump, mitm_arguments)
         mitm_arguments = [
             '-s', str(FLOW_PATH),
-            '--mode', f'reverse:{self.reverse_mock_url}',
+            '--mode', f'reverse:{self.reverse_target_url}',
             '--listen-port', str(self.mock_port),
             '--web-port', str(self.mock_web_port),
             '--web-host', proxy_ip,

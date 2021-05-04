@@ -22,7 +22,7 @@ def post_mock_servers():
         msg = str(e)
     if ret:
         resp = msg
-        return resp, 200
+        return resp, 201
     else:
         resp = {
             "error": msg
@@ -79,7 +79,7 @@ def delete_mock_server(mock_server_id):
     if mock_server:
         resp = mock_server.to_dict()
         MockServerRepo.delete_mock_server(mock_server_id)
-        return resp, 200
+        return resp, 204
     else:
         resp = {
             "error": "Not Found"
