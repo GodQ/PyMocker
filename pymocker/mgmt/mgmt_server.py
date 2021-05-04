@@ -14,6 +14,17 @@ def post_mock_servers():
     if 'Host' in request.headers:
         host = request.headers['Host'].split(':')[0]
     req_data = request.json
+    if 'target_url' not in req_data:
+        resp = {
+            'error': 'target_url must specify'
+        }
+        return resp, 400
+    if 'mock_server_id' not in req_data:
+        resp = {
+            'error': 'mock_server_id must specify'
+        }
+        return resp, 400
+
     req_data['host'] = host
     try:
         ret, msg = MockServerRepo.add_mock_server(req_data)
@@ -51,6 +62,21 @@ def get_mock_server(mock_server_id):
     mock_server = MockServerRepo.get_mock_server(mock_server_id)
     if mock_server:
         resp = mock_server.to_dict()
+        return resp, 200
+    else:
+        resp = {
+            "error": "Not Found"
+        }
+        return resp, 404
+
+
+@flask_app.route('/mock_servers/<mock_server_id>/mock_rules', methods=['GET'])
+def get_mock_server_mock_rules(mock_server_id):
+    mock_server = MockServerRepo.get_mock_server(mock_server_id)
+    if mock_server:
+        resp = {
+            "mock_rules": mock_server.mock_rules
+        }
         return resp, 200
     else:
         resp = {
