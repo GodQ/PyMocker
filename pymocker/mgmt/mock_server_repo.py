@@ -80,7 +80,8 @@ class MockServerRepo:
     def delete_mock_server(cls, mock_server_id):
         p = cls.MockServers.get(mock_server_id)
         if p:
-            p.stop()
+            EngineDriver.get_engine().stop(mock_server_id)
+            print('Mock server deleted', mock_server_id)
             del cls.MockServers[mock_server_id]
             return p
         else:
