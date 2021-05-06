@@ -61,6 +61,9 @@ def start(mock_server_id=None):
     assert resp.status_code == 200, f'{mgmt_url}, {resp.status_code}, {resp.reason}, {resp.content}'
     settings = resp.json()
     current_mock_server.load(settings)
+    os.environ['mock_port'] = str(settings['mock_port'])
+    os.environ['mock_web_port'] = str(settings['mock_web_port'])
+    os.environ['target_url'] = settings['target_url']
     run_mocker(reverse_target_url=settings['target_url'],
                mock_port=settings['mock_port'],
                mock_web_port=settings['mock_web_port'])

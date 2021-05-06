@@ -4,6 +4,16 @@ import jsonpath
 import copy
 
 
+built_in_apis = ['/mock_rules', '/mock_records']
+
+
+def is_build_in_api(req_url):
+    for api in built_in_apis:
+        if api in req_url:
+            return True
+    return False
+
+
 class MockInfo:
     def __init__(self):
         self.mock_server_id = ''
@@ -115,11 +125,19 @@ def process_request(req: Request) -> Response:
                 resp.headers = {"Content-Type": "application/json"}
                 return resp
 
-    # Traverse rules list to match every rule
-    for rule in current_mock_rules:
-        ret = process_one_rule(rule, req, resp)
-        if ret is True:
+    elif req.path == '/mock_records':
+        if req.method.lower() == 'get':
+            from pymocker.mocker.stats import HttpRecordStore
+            resp.status = 200
+            resp.data = json.dumps(HttpRecordStore.get_http_records())
+            resp.headers = {"Content-Type": "application/json"}
             return resp
+
+    # Traverse rules list to match every rule
+    rule = match_any_rule(req)
+    if rule:
+        resp = process_by_rule(rule, req, resp)
+        return resp
     return None
 
 
@@ -133,7 +151,14 @@ def exec_python_script(python_script: str, rule: dict, request: Request, respons
     exec(python_script)
 
 
-def process_one_rule(rule: dict, req: Request, resp: Response) -> bool:
+def match_any_rule(req: Request) -> dict:
+    for rule in get_mock_rules():
+        if match_one_rule(rule, req) is True:
+            return rule
+    return None
+
+
+def match_one_rule(rule: dict, req: Request) -> bool:
     rule_method = rule.get('method', "")
     if rule_method:
         if rule_method.lower() != req.method.lower():
@@ -164,7 +189,10 @@ def process_one_rule(rule: dict, req: Request, resp: Response) -> bool:
             val = jsonpath.jsonpath(req.data, k)
             if val is False or val[0] != v:
                 return False
+    return True
 
+
+def process_by_rule(rule: dict, req: Request, resp: Response) -> Response:
     # Pass all validate
     resp.status = rule.get('response_status', 200)
     resp.headers = rule.get('response_headers', {})
@@ -175,5 +203,5 @@ def process_one_rule(rule: dict, req: Request, resp: Response) -> bool:
     if isinstance(resp.data, dict):
         resp.data = json.dumps(resp.data)
         resp.headers['Content-Type'] = "application/json"
-    return True
+    return resp
 
