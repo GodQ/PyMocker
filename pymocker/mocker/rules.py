@@ -4,6 +4,25 @@ import jsonpath
 import copy
 
 
+class MockInfo:
+    def __init__(self):
+        self.mock_server_id = ''
+        self.target_url = ''
+        self.mock_rules = []
+        self.mock_port = None
+        self.mock_web_port = None
+
+    def load(self, config):
+        self.mock_server_id = config.get('mock_server_id')
+        self.target_url = config.get('target_url')
+        self.mock_rules = config.get('mock_rules', [])
+        self.mock_port = config.get('mock_port', None)
+        self.mock_web_port = config.get('mock_web_port', None)
+
+
+current_mock_server = MockInfo()
+
+
 class Request:
     def __init__(self, **kwargs):
         self.method = kwargs.get('method')
@@ -51,13 +70,11 @@ class Response:
 
 
 def get_mock_rules():
-    from pymocker.mocker.mock_server import current_mock_server
     mock_rules = current_mock_server.mock_rules
     return mock_rules
 
 
 def set_mock_rules(rules: list):
-    from pymocker.mocker.mock_server import current_mock_server
     current_mock_server.mock_rules = rules
 
 

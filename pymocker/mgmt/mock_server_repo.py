@@ -1,4 +1,5 @@
-from pymocker.mocker.mock_server import MockServer
+from pymocker.mgmt.mock_server import MockServer
+from pymocker.engine.drivers import EngineDriver
 import requests
 import json
 from urllib3.exceptions import InsecureRequestWarning
@@ -36,12 +37,13 @@ class MockServerRepo:
             mock_server_id=mock_server_id,
             host=host
         )
-        process = mock_server.start()
-        if process.is_alive():
+        ins = EngineDriver.get_engine().run(mock_server)
+        print('Mock server created', ins)
+        if ins.is_alive():
             cls.MockServers[mock_server.mock_server_id] = mock_server
             return True, mock_server.to_dict()
         else:
-            return False, 'Process can not start'
+            return False, 'Mock server can not start'
 
     @classmethod
     def list_mock_servers(cls):

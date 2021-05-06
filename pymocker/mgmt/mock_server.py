@@ -3,7 +3,6 @@ import asyncio
 import json
 from pathlib import Path
 from colorama import Fore, Style
-from pymocker.mocker.proxy_run import mitmweb
 from pymocker.mgmt.port_repo import PortRepo
 from pymocker import config
 from pymocker.lib.log import get_logger
@@ -15,11 +14,7 @@ HTTP proxy server
 """
 
 CURRENT_PATH = Path(__file__).parent
-FLOW_PATH = CURRENT_PATH/'mitm.py'
-
-
 logger = get_logger()
-current_mock_server = None
 
 
 class MockServer:
@@ -31,7 +26,11 @@ class MockServer:
                  mock_server_id: str = None,
                  mock_rules: list = None,
                  host: str = None):
-        super().__init__()
+
+        assert mock_server_id, 'mock_server_id is required'
+        assert reverse_target_url, 'reverse_target_url is required'
+        assert reverse_target_url.find(':') > -1, 'reverse_target_url format should be http(s)://xxx.xxx'
+
         self.reverse_target_url = reverse_target_url
         if self.reverse_target_url.split(':')[0] == 'https':
             self.url_schema = 'https'
@@ -76,6 +75,10 @@ class MockServer:
         # if conf.get('proxy.filters'):
         #     self.ignore_hosts = '^%s' % ''.join(['(?!.*%s.*)' % i for i in conf.get('proxy.filters')])
 
+    def delete(self):
+        PortRepo.release_port(self.mock_port)
+        PortRepo.release_port(self.mock_web_port)
+
     def to_json(self):
         d = self.to_dict()
         return json.dumps(d)
@@ -99,47 +102,11 @@ class MockServer:
     def get_monitor_url(self):
         return f"http://{self.host}:{self.mock_web_port}"
 
-    def run(self):
-        global current_mock_server
-        current_mock_server = self
-        proxy_ip = str(config.config.proxy_host)
-        logger.warning(f'Proxy starts on http://{proxy_ip}:{self.mock_port}   {Fore.CYAN}')
-        # mitm_arguments = [
-        #     '-s', str(FLOW_PATH),
-        #     '-p', self.proxy_port,
-        #     '--ssl-insecure',
-        #     '--no-http2',
-        #     '-q'
-        # ]
-        # if self.ignore_hosts:
-        #     mitm_arguments += ['--ignore-hosts', self.ignore_hosts]
-        # run(DumpMaster, mitmdump, mitm_arguments)
-        mitm_arguments = [
-            '-s', str(FLOW_PATH),
-            '--mode', f'reverse:{self.reverse_target_url}',
-            '--listen-port', str(self.mock_port),
-            '--web-port', str(self.mock_web_port),
-            '--web-host', proxy_ip,
-            '--no-web-open-browser',
-            '--showhost',
-            '-vvvvvv',
-            '--ssl-insecure',
-            '--no-http2',
-            # '-q'
-        ]
-        print(mitm_arguments)
-        new_loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(new_loop)
-        mitmweb(mitm_arguments)
-
-
-# proxy_server = ProxyServer()
-
 
 def info_msg(*msg):
     print(f'{Fore.YELLOW}[proxy_server]', *msg, Style.RESET_ALL)
 
 
 if __name__ == '__main__':
-    server = MockServer()
-    server.start()
+    server = MockServer(mock_server_id='0001', reverse_target_url='https://www.baidu.com')
+    print(server.to_dict())

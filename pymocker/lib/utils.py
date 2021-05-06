@@ -12,7 +12,7 @@ def check_port_in_use(port, host='0.0.0.0') -> bool:
         return False
 
 
-def find_available_port(from_port: int, to_port: int, start: int = -1, host='0.0.0.0') -> int:
+def find_available_port(from_port: int, to_port: int, start: int = -1, host='0.0.0.0', blacklist: set = set()) -> int:
     assert to_port >= from_port
     if start == -1:
         start = from_port
@@ -23,7 +23,7 @@ def find_available_port(from_port: int, to_port: int, start: int = -1, host='0.0
         port = i + start
         if port > to_port:
             port = port - to_port - 1 + from_port
-        if check_port_in_use(port, host) is False:
+        if check_port_in_use(port, host) is False and port not in blacklist:
             return port
     return 0
 

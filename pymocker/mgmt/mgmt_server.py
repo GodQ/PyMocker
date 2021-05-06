@@ -1,6 +1,6 @@
 
 from flask import Flask, request
-from pymocker import settings
+from pymocker import config
 from pymocker.mgmt.mock_server_repo import MockServerRepo
 from pymocker.lib.utils import get_host_ip
 
@@ -114,7 +114,7 @@ def delete_mock_server(mock_server_id):
 
 
 def run_mgmt_server():
-    flask_app.run(host=settings.config.mock_host, port=settings.config.mgmt_port, debug=True)
+    flask_app.run(host='0.0.0.0', port=config.config.mgmt_port, debug=True)
 
 
 if __name__ == '__main__':
