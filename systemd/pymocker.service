@@ -1,0 +1,13 @@
+[Unit]
+Description=Mock Service
+StartLimitIntervalSec=30
+StartLimitBurst=3
+
+[Service]
+Type=simple
+ExecStart=/bin/bash -c 'source venv/bin/activate && python main.py'
+Restart=always
+WorkingDirectory=/root/test-mgmt/PyMocker
+
+[Install]
+WantedBy=multi-user.target
