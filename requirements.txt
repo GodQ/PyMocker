@@ -1,5 +1,5 @@
 flask==1.1.2
-mitmproxy==5.1.1
+mitmproxy==7.0.3
 flask_restful==0.3.8
 colorama==0.4.3
 jsonpath==0.82
