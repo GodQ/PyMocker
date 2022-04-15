@@ -15,6 +15,7 @@ class PortRepo:
         cls.start += 1
         if cls.start == cls.to_port + 1:
             cls.start = cls.from_port
+        cls.used_ports.add(port)
         return port
 
     @classmethod

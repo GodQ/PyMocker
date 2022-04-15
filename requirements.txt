@@ -1,4 +1,6 @@
 flask==1.1.2
+flask_sqlalchemy
+flask-cors
 mitmproxy==5.1.1
 flask_restful==0.3.8
 colorama==0.4.3

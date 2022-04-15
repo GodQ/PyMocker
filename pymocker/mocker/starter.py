@@ -7,7 +7,7 @@ from colorama import Fore
 from pymocker.config import config
 from pymocker.lib.log import get_logger
 from pymocker.mocker.proxy_run import mitmweb
-from pymocker.mocker.rules import current_mock_server
+from pymocker.mocker.rules import current_mock_server, refresh_settings_from_remote
 
 """
 HTTP proxy server
@@ -55,12 +55,14 @@ def start(mock_server_id=None):
         mock_server_id = os.environ.get('mock_server_id', None)
     print("Starting Mock Server", mock_server_id)
     assert mock_server_id
-    mgmt_url = f'http://{config.mgmt_host}:{config.mgmt_port}/mock_servers/{mock_server_id}'
-    resp = requests.get(mgmt_url)
-    print("Fetch mock server config from mgmt, status: ", mock_server_id, resp.status_code, resp.reason, resp.content)
-    assert resp.status_code == 200, f'{mgmt_url}, {resp.status_code}, {resp.reason}, {resp.content}'
-    settings = resp.json()
-    current_mock_server.load(settings)
+    # mgmt_url = f'http://{config.mgmt_host}:{config.mgmt_port}/mock_servers/{mock_server_id}'
+    # resp = requests.get(mgmt_url)
+    # print("Fetch mock server config from mgmt, status: ", mock_server_id, resp.status_code, resp.reason, resp.content)
+    # assert resp.status_code == 200, f'{mgmt_url}, {resp.status_code}, {resp.reason}, {resp.content}'
+    # settings = resp.json()
+    # current_mock_server.load(settings)
+    settings = refresh_settings_from_remote(mock_server_id)
+    print(settings)
     os.environ['mock_port'] = str(settings['mock_port'])
     os.environ['mock_web_port'] = str(settings['mock_web_port'])
     os.environ['target_url'] = settings['target_url']

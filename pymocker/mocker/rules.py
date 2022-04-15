@@ -2,6 +2,9 @@ import re
 import json
 import jsonpath
 import copy
+import requests
+import os
+from pymocker.config import config
 
 
 built_in_apis = ['/mock_rules', '/mock_records']
@@ -88,6 +91,21 @@ def set_mock_rules(rules: list):
     current_mock_server.mock_rules = rules
 
 
+def refresh_settings_from_remote(mock_server_id=None):
+    if not mock_server_id:
+        mock_server_id = os.environ.get('mock_server_id', None)
+    assert mock_server_id
+    mgmt_url = f'http://{config.mgmt_host}:{config.mgmt_port}/mock_servers/{mock_server_id}'
+    resp = requests.get(mgmt_url)
+    print("Fetch mock server config from mgmt, status: ", mock_server_id, resp.status_code, resp.reason)
+    assert resp.status_code == 200, f'{mgmt_url}, {resp.status_code}, {resp.reason}, {resp.content}'
+    settings = resp.json()
+    # print(mgmt_url)
+    # print(settings)
+    current_mock_server.load(settings)
+    return settings
+
+
 def process_request(req: Request) -> Response:
     current_mock_rules = get_mock_rules()
     resp = Response()
@@ -124,6 +142,12 @@ def process_request(req: Request) -> Response:
                 resp.data = json.dumps(get_mock_rules())
                 resp.headers = {"Content-Type": "application/json"}
                 return resp
+    elif req.path == '/refresh':
+        refresh_settings_from_remote()
+        resp.status = 200
+        resp.data = {'msg': 'refreshed'}
+        resp.headers = {"Content-Type": "application/json"}
+        return resp
 
     elif req.path == '/mock_records':
         if req.method.lower() == 'get':

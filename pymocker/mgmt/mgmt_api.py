@@ -1,18 +1,12 @@
 
-from flask import Flask, request
+from flask import request
 from pymocker import config
-from pymocker.mgmt.mock_server_repo import MockServerRepo
-from pymocker.lib.utils import get_host_ip
-
-
-flask_app = Flask(__name__)
+from pymocker.mgmt.mock_server_mgmt import MockServerMgmt
+from pymocker.app_init import app as flask_app
 
 
 @flask_app.route('/mock_servers', methods=['POST'])
 def post_mock_servers():
-    host = get_host_ip()
-    if 'Host' in request.headers:
-        host = request.headers['Host'].split(':')[0]
     req_data = request.json
     if 'target_url' not in req_data:
         resp = {
@@ -25,9 +19,8 @@ def post_mock_servers():
         }
         return resp, 400
 
-    req_data['host'] = host
     try:
-        ret, msg = MockServerRepo.add_mock_server(req_data)
+        ret, msg = MockServerMgmt.add_mock_server(req_data)
     except Exception as e:
         ret = False
         msg = str(e)
@@ -44,7 +37,7 @@ def post_mock_servers():
 @flask_app.route('/mock_servers', methods=['GET'])
 def list_mock_servers():
     show_rules = request.args.get("show_rules", 'false')
-    servers = MockServerRepo.list_mock_servers()
+    servers = MockServerMgmt.list_mock_servers()
     data = []
     for s in servers:
         ser = s.to_dict()
@@ -59,7 +52,7 @@ def list_mock_servers():
 
 @flask_app.route('/mock_servers/<mock_server_id>', methods=['GET'])
 def get_mock_server(mock_server_id):
-    mock_server = MockServerRepo.get_mock_server(mock_server_id)
+    mock_server = MockServerMgmt.get_mock_server(mock_server_id)
     if mock_server:
         resp = mock_server.to_dict()
         return resp, 200
@@ -72,7 +65,7 @@ def get_mock_server(mock_server_id):
 
 @flask_app.route('/mock_servers/<mock_server_id>/mock_rules', methods=['GET'])
 def get_mock_server_mock_rules(mock_server_id):
-    mock_server = MockServerRepo.get_mock_server(mock_server_id)
+    mock_server = MockServerMgmt.get_mock_server(mock_server_id)
     if mock_server:
         resp = {
             "mock_rules": mock_server.mock_rules
@@ -88,7 +81,7 @@ def get_mock_server_mock_rules(mock_server_id):
 @flask_app.route('/mock_servers/<mock_server_id>', methods=['PUT'])
 def put_mock_servers(mock_server_id):
     req_data = request.json
-    ret, msg = MockServerRepo.put_mock_server(mock_server_id, req_data)
+    ret, msg = MockServerMgmt.put_mock_server(mock_server_id, req_data)
     if ret:
         resp = req_data
         return resp, 200
@@ -99,12 +92,40 @@ def put_mock_servers(mock_server_id):
         return resp, 400
 
 
-@flask_app.route('/mock_servers/<mock_server_id>', methods=['DELETE'])
-def delete_mock_server(mock_server_id):
-    mock_server = MockServerRepo.get_mock_server(mock_server_id)
+@flask_app.route('/mock_servers/<mock_server_id>/start', methods=['POST'])
+def start_mock_server(mock_server_id):
+    mock_server = MockServerMgmt.get_mock_server(mock_server_id)
     if mock_server:
         resp = mock_server.to_dict()
-        MockServerRepo.delete_mock_server(mock_server_id)
+        MockServerMgmt.start_mock_server(mock_server_id)
+        return resp, 201
+    else:
+        resp = {
+            "error": "Not Found"
+        }
+        return resp, 404
+
+
+@flask_app.route('/mock_servers/<mock_server_id>/start', methods=['DELETE'])
+def stop_mock_server(mock_server_id):
+    mock_server = MockServerMgmt.get_mock_server(mock_server_id)
+    if mock_server:
+        # resp = mock_server.to_dict()
+        MockServerMgmt.stop_mock_server(mock_server_id)
+        return {}, 204
+    else:
+        resp = {
+            "error": "Not Found"
+        }
+        return resp, 404
+
+
+@flask_app.route('/mock_servers/<mock_server_id>', methods=['DELETE'])
+def delete_mock_server(mock_server_id):
+    mock_server = MockServerMgmt.get_mock_server(mock_server_id)
+    if mock_server:
+        resp = mock_server.to_dict()
+        MockServerMgmt.delete_mock_server(mock_server_id)
         return resp, 204
     else:
         resp = {

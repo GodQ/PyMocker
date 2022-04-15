@@ -3,17 +3,17 @@ Base threading server class
 """
 
 from multiprocessing import Process
-from pymocker.engine.baseengine import BaseEngine, MockServer
-from pymocker.mocker.starter import start
+from pymocker.engine.baseengine import BaseEngine, MockServerInstance
+from pymocker.mocker.starter import start as start_mock_server
 
 
 class ProcessEngine(BaseEngine):
     instances = {}
 
     @classmethod
-    def run(cls, mock_server: MockServer, **kwargs):
+    def run(cls, mock_server: MockServerInstance, **kwargs):
         mock_server_id = mock_server.mock_server_id
-        p = Process(target=start, args=(mock_server_id,), kwargs=kwargs)
+        p = Process(target=start_mock_server, args=(mock_server_id,), kwargs=kwargs)
         p.daemon = True
         p.start()
         cls.instances[mock_server_id] = p
@@ -21,12 +21,12 @@ class ProcessEngine(BaseEngine):
 
     @classmethod
     def stop(cls, mock_server_id):
-        mock_server = cls.instances.get(mock_server_id)
-        if not mock_server:
+        mock_server_process = cls.instances.get(mock_server_id)
+        if not mock_server_process:
             raise Exception('No such mock server')
-        mock_server.terminate()
-        mock_server.join()
-        mock_server.close()
+        mock_server_process.terminate()
+        mock_server_process.join()
+        mock_server_process.close()
 
     @classmethod
     def is_alive(cls, mock_server_id):

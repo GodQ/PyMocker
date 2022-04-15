@@ -1,11 +1,11 @@
-from pymocker.mgmt.mock_server import MockServer
+from pymocker.mgmt.mock_server_model import MockServerInstance
 
 
 class BaseEngine:
     instances = None
 
     @classmethod
-    def run(cls, mock_server: MockServer):
+    def run(cls, mock_server: MockServerInstance):
         pass
 
     @classmethod
