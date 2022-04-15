@@ -27,7 +27,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"mock_server_id\": \"001\",\n    \"mock_url\": \"https://www.httpbin.org\",\n    \"mock_rules\": [\n        {\n            \"method\": \"PUT\",\n            \"path\": \".*put.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"error\": \"Rewrite put response!!!\"\n            },\n            \"response_headers\": {\n                \"HHH\": \"Mock header\"\n            }\n        },\n        {\n            \"method\": \"POST\",\n            \"path\": \".*/post.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"info\": \"hit post!!\"\n            }\n        },\n        {\n            \"method\": \"POST\",\n            \"path\": \".*/script.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"info\": \"hit script!!\"\n            },\n            \"python_script\": \"if request.params['action']=='login' and request.data['user']=='lucy': response.data['token']='token12345'\"\n        }\n    ]\n}",
+							"raw": "{\n    \"mock_server_id\": \"001\",\n    \"target_url\": \"https://www.httpbin.org\",\n    \"mock_rules\": [\n        {\n            \"method\": \"PUT\",\n            \"path\": \".*put.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"error\": \"Rewrite put response!!!\"\n            },\n            \"response_headers\": {\n                \"HHH\": \"Mock header\"\n            }\n        },\n        {\n            \"method\": \"POST\",\n            \"path\": \".*/post.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"info\": \"hit post!!\"\n            }\n        },\n        {\n            \"method\": \"POST\",\n            \"path\": \".*/script.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"info\": \"hit script!!\"\n            },\n            \"python_script\": \"if request.params['action']=='login' and request.data['user']=='lucy': response.data['token']='token12345'\"\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -35,11 +35,12 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:5000/mock_servers",
+							"raw": "http://{{host}}:{{port}}/mock_servers",
+							"protocol": "http",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "5000",
+							"port": "{{port}}",
 							"path": [
 								"mock_servers"
 							]
@@ -66,7 +67,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"mock_server_id\": \"002\",\n    \"mock_url\": \"http://www.httpbin.org\",\n    \"mock_port\": \"8080\",\n    \"mock_web_port\": \"8082\",\n    \"mock_rules\": [\n        {\n            \"method\": \"PUT\",\n            \"path\": \".*put.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"error\": \"Rewrite put response!!!\"\n            },\n            \"response_headers\": {\n                \"HHH\": \"Mock header\"\n            }\n        },\n        {\n            \"method\": \"POST\",\n            \"path\": \".*/post.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"info\": \"hit post!!\"\n            }\n        }\n    ]\n}",
+							"raw": "{\n    \"mock_server_id\": \"002\",\n    \"target_url\": \"http://www.httpbin.org\",\n    \"mock_port\": \"8080\",\n    \"mock_web_port\": \"8082\",\n    \"mock_rules\": [\n        {\n            \"method\": \"PUT\",\n            \"path\": \".*put.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"error\": \"Rewrite put response!!!\"\n            },\n            \"response_headers\": {\n                \"HHH\": \"Mock header\"\n            }\n        },\n        {\n            \"method\": \"POST\",\n            \"path\": \".*/post.*\",\n            \"response_status\": 201,\n            \"response_data\": {\n                \"info\": \"hit post!!\"\n            }\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -74,11 +75,12 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:5000/mock_servers",
+							"raw": "http://{{host}}:{{port}}/mock_servers",
+							"protocol": "http",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "5000",
+							"port": "{{port}}",
 							"path": [
 								"mock_servers"
 							]
@@ -101,14 +103,75 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:5000/mock_servers/001",
+							"raw": "http://{{host}}:{{port}}/mock_servers/001",
+							"protocol": "http",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "5000",
+							"port": "{{port}}",
 							"path": [
 								"mock_servers",
 								"001"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "start mock_server 001",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/mock_servers/001/start",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"mock_servers",
+								"001",
+								"start"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "stop mock_server 001",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/mock_servers/001/start",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"mock_servers",
+								"001",
+								"start"
 							]
 						}
 					},
@@ -120,11 +183,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:5000/mock_servers",
+							"raw": "http://{{host}}:{{port}}/mock_servers",
+							"protocol": "http",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "5000",
+							"port": "{{port}}",
 							"path": [
 								"mock_servers"
 							],
@@ -145,14 +209,36 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:5000/mock_servers/001",
+							"raw": "http://{{host}}:{{port}}/mock_servers/001",
+							"protocol": "http",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "5000",
+							"port": "{{port}}",
 							"path": [
 								"mock_servers",
 								"001"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get mock server rules",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{host}}:{{port}}/mock_servers/001/mock_rules",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"mock_servers",
+								"001",
+								"mock_rules"
 							]
 						}
 					},
@@ -164,14 +250,35 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:5000/mock_servers/001",
+							"raw": "http://{{host}}:{{port}}/mock_servers/001",
+							"protocol": "http",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "5000",
+							"port": "{{port}}",
 							"path": [
 								"mock_servers",
 								"001"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete mock server 002",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://{{host}}:{{port}}/mock_servers/002",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"mock_servers",
+								"002"
 							]
 						}
 					},
@@ -183,7 +290,7 @@
 			"name": "mock server",
 			"item": [
 				{
-					"name": "mock get  mock_rules",
+					"name": "get  mock_rules",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -236,6 +343,23 @@
 					"response": []
 				},
 				{
+					"name": "get  mock_records",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{access_url}}/mock_records",
+							"host": [
+								"{{access_url}}"
+							],
+							"path": [
+								"mock_records"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "mock put",
 					"request": {
 						"method": "PUT",
@@ -280,34 +404,7 @@
 					"response": []
 				},
 				{
-					"name": "get",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{access_url}}/get?a=1&b=x",
-							"host": [
-								"{{access_url}}"
-							],
-							"path": [
-								"get"
-							],
-							"query": [
-								{
-									"key": "a",
-									"value": "1"
-								},
-								{
-									"key": "b",
-									"value": "x"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "get by python script",
+					"name": "mock get by python script",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -333,6 +430,78 @@
 									"key": "action",
 									"value": "login"
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "proxy get",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{access_url}}/get?a=1&b=x",
+							"host": [
+								"{{access_url}}"
+							],
+							"path": [
+								"get"
+							],
+							"query": [
+								{
+									"key": "a",
+									"value": "1"
+								},
+								{
+									"key": "b",
+									"value": "x"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "alp-test",
+			"item": [
+				{
+					"name": "create mock_server 003",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.globals.set(\"mock_port\", pm.response.json().mock_port);",
+									"pm.globals.set(\"access_url\", pm.response.json().access_url);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"mock_server_id\": \"alp-test\",\n    \"mock_url\": \"https://test0.alp-decc.hs-portal.eng.vmware.com\",\n    \"mock_rules\": []\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/mock_servers",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"mock_servers"
 							]
 						}
 					},

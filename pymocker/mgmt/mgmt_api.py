@@ -1,4 +1,4 @@
-
+import traceback
 from flask import request
 from pymocker import config
 from pymocker.mgmt.mock_server_mgmt import MockServerMgmt
@@ -22,10 +22,12 @@ def post_mock_servers():
     try:
         ret, msg = MockServerMgmt.add_mock_server(req_data)
     except Exception as e:
+        tb = traceback.format_exc()
         ret = False
-        msg = str(e)
-    if ret:
-        resp = msg
+        msg = str(e) + '\n' + tb
+        print(msg)
+    if ret is True:
+        resp = {'info': 'created'}
         return resp, 201
     else:
         resp = {
@@ -126,7 +128,7 @@ def delete_mock_server(mock_server_id):
     if mock_server:
         resp = mock_server.to_dict()
         MockServerMgmt.delete_mock_server(mock_server_id)
-        return resp, 204
+        return resp, 200
     else:
         resp = {
             "error": "Not Found"

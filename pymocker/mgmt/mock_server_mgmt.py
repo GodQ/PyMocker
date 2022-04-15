@@ -45,6 +45,7 @@ class MockServerMgmt:
         mock_server = MockServerInstance(record)
         cls.mock_server_instances[mock_server.mock_server_id] = mock_server
         # cls.start_mock_server(mock_server_id)
+        return True, ''
 
     @classmethod
     def list_mock_servers(cls):
@@ -143,7 +144,6 @@ class MockServerMgmt:
                 print('Mock server stopped', mock_server_id)
             p.release()
             del cls.mock_server_instances[mock_server_id]
-            return p
         record = MockServerRecord.query.filter_by(mock_server_id=mock_server_id).first()
         if record:
             db.session.delete(record)
