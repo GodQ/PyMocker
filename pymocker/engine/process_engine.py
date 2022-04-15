@@ -26,7 +26,7 @@ class ProcessEngine(BaseEngine):
             raise Exception('No such mock server')
         mock_server_process.terminate()
         mock_server_process.join()
-        mock_server_process.close()
+        # mock_server_process.close()
 
     @classmethod
     def is_alive(cls, mock_server_id):
