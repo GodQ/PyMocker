@@ -114,14 +114,18 @@ class MockServerMgmt:
                 return False, f"No mock_server_id {mock_server_id} in db"
             mock_server = MockServerInstance(record)
             cls.mock_server_instances[mock_server_id] = mock_server
-        ins = EngineDriver.get_engine().run(mock_server)
-        if ins.is_alive():
-            mock_server.set_running()
-            print(f'Mock server {mock_server_id} started')
-            return True, mock_server.to_dict()
+        if not mock_server.is_running():
+            is_alive = EngineDriver.get_engine().run(mock_server)
+            if is_alive:
+                mock_server.set_running()
+                print(f'Mock server {mock_server_id} started')
+                return True, mock_server.to_dict()
+            else:
+                print(f'Mock server {mock_server_id} failed to start')
+                return False, 'Mock server can not start'
         else:
-            print(f'Mock server {mock_server_id} failed to start')
-            return False, 'Mock server can not start'
+            print(f'Mock server {mock_server_id} is started before')
+            return True, mock_server.to_dict()
 
     @classmethod
     def stop_mock_server(cls, mock_server_id):

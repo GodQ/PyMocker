@@ -204,7 +204,7 @@
 					"response": []
 				},
 				{
-					"name": "get mock server",
+					"name": "get mock server 001",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -224,7 +224,7 @@
 					"response": []
 				},
 				{
-					"name": "get mock server rules",
+					"name": "get mock server rules 001",
 					"request": {
 						"method": "GET",
 						"header": [],

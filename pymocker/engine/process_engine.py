@@ -13,11 +13,14 @@ class ProcessEngine(BaseEngine):
     @classmethod
     def run(cls, mock_server: MockServerInstance, **kwargs):
         mock_server_id = mock_server.mock_server_id
+        if mock_server_id in cls.instances:
+            return cls.instances[mock_server_id].is_alive()
         p = Process(target=start_mock_server, args=(mock_server_id,), kwargs=kwargs)
         p.daemon = True
         p.start()
         cls.instances[mock_server_id] = p
-        return p
+        print(p)
+        return p.is_alive()
 
     @classmethod
     def stop(cls, mock_server_id):
@@ -27,6 +30,7 @@ class ProcessEngine(BaseEngine):
         mock_server_process.terminate()
         mock_server_process.join()
         # mock_server_process.close()
+        del cls.instances[mock_server_id]
 
     @classmethod
     def is_alive(cls, mock_server_id):
